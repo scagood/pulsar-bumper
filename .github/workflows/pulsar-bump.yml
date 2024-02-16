@@ -1,0 +1,22 @@
+on:
+  schedule:
+    # Once an hour (in theory)
+    - cron: '0 * * * *'
+
+jobs:
+  update-homebrew:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PERSONAL_TOKEN }}
+      - id: update-check
+        env:
+          PERSONAL_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+        run: sh update-brew.sh
+      - if: ${{ steps.update-check.outputs.UPDATE == 'true' }}
+        run: git config user.email 2230835+scagood@users.noreply.github.com
+      - if: ${{ steps.update-check.outputs.UPDATE == 'true' }}
+        uses: Homebrew/actions/setup-homebrew@master
+      - if: ${{ steps.update-check.outputs.UPDATE == 'true' }}
+        run: brew bump-cask-pr pulsar --version ${{ steps.update-check.outputs.LATEST_VERSION }}
