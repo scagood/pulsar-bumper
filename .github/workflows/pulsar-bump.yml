@@ -21,3 +21,5 @@ jobs:
         uses: Homebrew/actions/setup-homebrew@master
       - if: ${{ steps.update-check.outputs.UPDATE == 'true' }}
         run: brew bump-cask-pr pulsar --version ${{ steps.update-check.outputs.LATEST_VERSION }}
+        env:
+          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
